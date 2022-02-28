@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/./guestbookController.php';
-
 function connect()
 {
   return fopen(getenv('GUESTBOOK'), 'a+');
@@ -52,4 +50,42 @@ function deleteVisitor(string $email)
   fclose($tmp);
   unlink(getenv('GUESTBOOK'));
   rename('tmp_delete.csv', getenv('GUESTBOOK'));
+}
+
+// List All Visitors
+function listAllVisitors(string $email = null)
+{
+  $handle = connect();
+  while (false === feof($handle)) {
+    $register = fgetcsv($handle);
+    if ($register) {
+      if (!$email) {
+        yield [
+          'email' => $register[0],
+          'name' => $register[1]
+        ];
+      } else if ($email == $register[0]) {
+        yield [
+          'email' => $register[0],
+          'name' => $register[1]
+        ];
+      }
+    }
+  }
+  close($handle);
+}
+
+// Update Visitor
+function updateVisitor(string $name)
+{
+  $handle = connect();
+  if ($name) {
+    while (false === feof($handle)) {
+      $register = fgetcsv($handle);
+      if ($register && $register[1] != $name) {
+        fputcsv($handle, $register);
+      }
+    }
+  }
+  close($handle);
 }

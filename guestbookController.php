@@ -2,13 +2,6 @@
 
 require_once __DIR__ . '/./guestbookRepository.php';
 
-function debugger($code)
-{
-  echo '<pre>';
-  print_r($code);
-  echo '</pre>';
-}
-
 $config = parse_ini_file('config.ini');
 putenv('GUESTBOOK=' . $config['GUESTBOOK']);
 
@@ -27,8 +20,9 @@ try {
 } catch (Exception $e) {
   header('Content-Type: text/html; charset=utf-8', true, 400);
   echo $e->getMessage() . '<br> <a href="' . $_SERVER['HTTP_REFERER'] . '">Voltar para a home.</a>';
-  exit(1);
+  exit(0);
 }
 
 saveVisitor($visitor);
 header('Location: ' . $_SERVER['HTTP_REFERER'], true, 303);
+exit(0);
